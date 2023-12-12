@@ -31,4 +31,4 @@ jobs:
       run: |
         flutter build apk
         ls -ll
-        ls -ll ./build
+        ls -R ./build/
