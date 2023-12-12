@@ -27,10 +27,8 @@ jobs:
     - name: Flutter Pub Get
       run: flutter pub get
 
-    # - name: Flutter Pub Upgrade
-    #   run: flutter pub upgrade
-
     - name: Flutter Build APK
       run: |
         flutter build apk
         ls -ll
+        ls -ll ./build
