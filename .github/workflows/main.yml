@@ -31,4 +31,22 @@ jobs:
       run: |
         flutter build apk
         ls -ll
-        ls -R ./build/
+        
+    - name: Send APK by Email
+      if: success()
+      env:
+        GMAIL_USER: pratiksanas816@gmail.com
+        GMAIL_PASSWORD: Satara@123
+        TO_EMAIL: pratiksanas5@gmail.com
+      run: |
+        echo "Sending APK by email..."
+
+        # Install mutt
+        sudo apt-get install -y mutt
+
+        # Attach the APK file
+        mutt -e "set content_type=text/plain" -s "Flutter Build Successful" -a ./build/app/outputs/flutter-apk/app-release.apk -- $TO_EMAIL <<EOT
+        This is the APK file for the latest Flutter build.
+        EOT
+
+        echo "APK sent successfully."
