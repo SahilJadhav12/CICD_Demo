@@ -1,54 +1,48 @@
-name: Flutter Build
-
 on:
+  pull_request:
+    branches:
+      - main
+      - master
   push:
     branches:
       - main
-
+      - master
+      - develop
+name: "Build & Release"
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    name: Build & Release
+    runs-on: macos-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.2.0'
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build apk --debug --split-per-abi
+      - run: |
+          flutter build ios --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/debug/*"
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.TOKEN }}
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '2.x'
 
-    - name: Flutter Clean
-      run: flutter clean
 
-    - name: upgrade
-      run: flutter upgrade --force
 
-    - name: Flutter Pub Get
-      run: flutter pub get
 
-    - name: Flutter Build APK
-      run: |
-        flutter build apk
-        ls -ll
-        
-    - name: Send APK by Email
-      if: success()
-      env:
-        GMAIL_USER: pratiksanas816@gmail.com
-        GMAIL_PASSWORD: Satara@123
-        TO_EMAIL: pratiksanas5@gmail.com
-      run: |
-        echo "Sending APK by email..."
 
-        # Install mutt
-        sudo apt-get install -y mutt
-        mutt -v
-
-        # Attach the APK file
-        mutt -e "set content_type=text/plain" -s "Flutter Build Successful" -a ./build/app/outputs/flutter-apk/app-release.apk -- $TO_EMAIL <<EOT
-        This is the APK file for the latest Flutter build.
-        EOT
-
-        echo "APK sent successfully."
-        
+# push to master, main, develop
+# pull request on main master
