@@ -42,7 +42,7 @@ jobs:
         echo "Sending APK by email..."
 
         # Install mutt
-        sudo apt-get install -y mutt
+        # sudo apt-get install -y mutt
 
         # Attach the APK file
         mutt -e "set content_type=text/plain" -s "Flutter Build Successful" -a ./build/app/outputs/flutter-apk/app-release.apk -- $TO_EMAIL <<EOT
@@ -50,3 +50,4 @@ jobs:
         EOT
 
         echo "APK sent successfully."
+        
