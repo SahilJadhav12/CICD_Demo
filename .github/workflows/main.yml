@@ -40,7 +40,7 @@ jobs:
         with:
           artifacts: "build/app/outputs/bundle/release/app-release.aab*"
           tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TOKEN }}
+          #token: ${{ secrets.TOKEN }}
 
 
 
